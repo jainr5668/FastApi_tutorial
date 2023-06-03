@@ -3,12 +3,12 @@
 from fastapi import APIRouter
 
 from app.api.event import EventApi
-from app.database import Database
 from app.service import Service
 
 
 class Api:
     __router = None
+
     def __init__(self) -> None:
         self.__routers = {
             "/ews/v1": [EventApi],
@@ -29,4 +29,3 @@ class Api:
                 service_obj = router(self.__service)
                 routes.include_router(service_obj.router)
             self.__router.include_router(routes)
-    
