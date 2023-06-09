@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from app.api.event import EventApi
+from app.api.game import GameApi
 from app.service import Service
 
 
@@ -11,7 +12,7 @@ class Api:
 
     def __init__(self) -> None:
         self.__routers = {
-            "/ews/v1": [EventApi],
+            "/ews/v1": [EventApi, GameApi],
         }
         self.__service = Service()
 
