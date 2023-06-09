@@ -10,7 +10,6 @@ class Database:
     __connect_args = {"check_same_thread": False}
     __engine = create_engine(__DATABASE_PATH,
                              connect_args=__connect_args)
-    __base = None
     __session_local = None
 
     @property

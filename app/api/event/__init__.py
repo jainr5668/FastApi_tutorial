@@ -14,7 +14,7 @@ class EventApi:
     @property
     def router(self):
         if self.__router is None:
-            self.__router = APIRouter(prefix='/event', tags=['Event'])
+            self.__router = APIRouter(prefix='/events', tags=['Event'])
             self.__get_routes()
         return self.__router
 

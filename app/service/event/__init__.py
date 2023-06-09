@@ -1,3 +1,4 @@
+import copy
 from fastapi.responses import JSONResponse
 from app.database.event import EventPostModel, EventGetAllSchema
 
@@ -19,33 +20,30 @@ class EventService:
             end_date=request.end_date,
             max_player=request.max_player,
             min_player=request.min_player)
-        self.__update_database(event)
-        return {"id": event.id, "data": event}
-
-    def get_event(self, id):
-        event = self.__db().query(EventPostModel).filter(
-            EventPostModel.id == id).first()
-        if not event:
-            return self.__response_404()
-        event = event.first()
-        return event
-
-    def update_event(self, id):
-        event = self.__db().query(EventPostModel).filter(
-            EventPostModel.id == id).first()
-        if not event:
-            return self.__response_404()
-        for var, value in vars(EventPostModel).items():
-            setattr(event, var, value) if value else None
-
-        self.__update_database(event)
-        return event
-
-    def __update_database(self, event):
         db = self.__db()
         db.add(event)
         db.commit()
         db.refresh(event)
+        return {"id": event.id, "data": event}
 
-    def __response_404(self):
-        return JSONResponse(content={'status': '0'}, status_code=404)
+    def get_event(self, id):
+        event = self.__db().query(EventPostModel).filter(
+            EventPostModel.id == id).all()
+        if not event:
+            return JSONResponse(content={'status': '0'}, status_code=404)
+        event = event[0]
+        return event
+
+    def update_event(self, request):
+        db = self.__db()
+        event = db.query(EventPostModel).filter(
+            EventPostModel.id == request.id).first()
+        if not event:
+            return JSONResponse(content={'status': f'Event with the id: {request.id} does not exists.'}, status_code=404)
+        for name, value in request:
+            setattr(event,name,value) if value else None
+        db.add(event)
+        db.commit()
+        db.refresh(event)
+        return {"id": event.id, "data": event}
+
